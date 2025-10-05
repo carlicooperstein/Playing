@@ -1,0 +1,11 @@
+console.log('\n🎉 Silent Disco Server is Running!\n');
+console.log('📱 For Mobile Access (QR Code/Phone):');
+console.log('   http://192.168.1.66:3000\n');
+console.log('💻 For Computer Access (DJ/Admin):');
+console.log('   http://127.0.0.1:3000\n');
+console.log('⚠️  IMPORTANT:');
+console.log('   - DJ/Admin must use 127.0.0.1 (for Spotify auth)');
+console.log('   - Guests on phones use 192.168.1.66');
+console.log('   - Make sure your phone is on the SAME WiFi network\n');
+console.log('📡 Your devices must be on the same network!');
+console.log('═══════════════════════════════════════════\n');
