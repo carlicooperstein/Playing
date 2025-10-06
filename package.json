@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "node server.js",
+    "dev": "next dev",
+    "dev:custom": "node server.js",
     "build": "next build",
     "start": "next start",
     "start:custom": "NODE_ENV=production node server.js",

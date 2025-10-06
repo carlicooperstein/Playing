@@ -1,17 +1,7 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "next build",
   "outputDirectory": ".next",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install",
-  "framework": null,
-  "rewrites": [
-    {
-      "source": "/socket.io/(.*)",
-      "destination": "/api/socketio"
-    }
-  ]
+  "devCommand": "next dev",
+  "installCommand": "pnpm install",
+  "framework": "nextjs"
 }
-
-
-
-
