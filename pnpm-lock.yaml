@@ -64,19 +64,16 @@ importers:
         version: 4.5.7(@types/react@18.3.24)(react@18.3.1)
     devDependencies:
       '@types/node':
-        specifier: ^20.11.30
+        specifier: ^20.12.7
         version: 20.19.17
-      '@types/prop-types':
-        specifier: ^15.7.15
-        version: 15.7.15
       '@types/qrcode':
         specifier: ^1.5.5
         version: 1.5.5
       '@types/react':
-        specifier: ^18.2.73
+        specifier: ^18.3.1
         version: 18.3.24
       '@types/react-dom':
-        specifier: ^18.2.23
+        specifier: ^18.3.0
         version: 18.3.7(@types/react@18.3.24)
       '@types/spotify-web-playback-sdk':
         specifier: ^0.1.19
@@ -94,10 +91,10 @@ importers:
         specifier: ^8.4.38
         version: 8.5.6
       tailwindcss:
-        specifier: ^3.4.1
+        specifier: ^3.4.3
         version: 3.4.17
       typescript:
-        specifier: ^5.4.3
+        specifier: ^5.4.5
         version: 5.9.2
 
 packages:
