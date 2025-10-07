@@ -38,23 +38,29 @@ app.prepare()
     console.log('Next.js app prepared successfully');
   const server = createServer((req, res) => {
     const parsedUrl = parse(req.url, true);
+    
+    // Add a simple health check endpoint
+    if (parsedUrl.pathname === '/health') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ status: 'healthy', timestamp: new Date().toISOString() }));
+      return;
+    }
+    
     handle(req, res, parsedUrl);
   });
 
   // Configure CORS for production
-  const corsOrigin = process.env.NODE_ENV === 'production' 
-    ? process.env.NEXT_PUBLIC_SOCKET_URL || process.env.RAILWAY_STATIC_URL
-    : '*';
-
   const io = new Server(server, {
     cors: {
-      origin: corsOrigin,
+      origin: '*', // Allow all origins for now
       methods: ['GET', 'POST'],
-      credentials: true
+      credentials: true,
+      allowedHeaders: ['Content-Type', 'Authorization']
     },
     pingTimeout: 60000,
     pingInterval: 25000,
-    transports: ['websocket', 'polling']
+    transports: ['polling', 'websocket'], // Polling first for compatibility
+    allowEIO3: true
   });
 
   io.on('connection', (socket) => {
@@ -302,7 +308,7 @@ app.prepare()
     });
   }, 30 * 60 * 1000);
 
-  server.listen(port, '0.0.0.0', () => {
+  server.listen(port, () => {
     console.log('=================================');
     console.log(`✅ Server is running!`);
     console.log(`Port: ${port}`);
