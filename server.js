@@ -4,16 +4,16 @@ const next = require('next');
 const { Server } = require('socket.io');
 
 const dev = process.env.NODE_ENV !== 'production';
-const hostname = '0.0.0.0';
 const port = parseInt(process.env.PORT || '3000', 10);
 
-console.log('Starting server with configuration:');
-console.log('  NODE_ENV:', process.env.NODE_ENV);
-console.log('  PORT:', port);
-console.log('  Hostname:', hostname);
-console.log('  Dev mode:', dev);
+console.log('=================================');
+console.log('Starting Silent Disco Server');
+console.log('=================================');
+console.log('Environment:', dev ? 'development' : 'production');
+console.log('Port:', port);
+console.log('Node version:', process.version);
 
-const app = next({ dev, hostname, port });
+const app = next({ dev });
 const handle = app.getRequestHandler();
 
 // Room management
@@ -302,7 +302,11 @@ app.prepare()
     });
   }, 30 * 60 * 1000);
 
-  server.listen(port, hostname, () => {
+  server.listen(port, '0.0.0.0', () => {
+    console.log('=================================');
+    console.log(`✅ Server is running!`);
+    console.log(`Port: ${port}`);
+    console.log(`Environment: ${dev ? 'development' : 'production'}`);
     if (dev) {
       const os = require('os');
       const networkInterfaces = os.networkInterfaces();
@@ -317,11 +321,11 @@ app.prepare()
         });
       });
       
-      console.log(`> Ready on http://localhost:${port} and http://${localIP}:${port}`);
-    } else {
-      console.log(`> Server listening on ${hostname}:${port}`);
-      console.log('> Production server started successfully');
+      console.log(`Local: http://localhost:${port}`);
+      console.log(`Network: http://${localIP}:${port}`);
     }
+    console.log('Socket.io: Enabled and ready');
+    console.log('=================================');
   });
 
   server.on('error', (err) => {

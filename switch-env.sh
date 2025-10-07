@@ -11,9 +11,10 @@ echo -e "${GREEN}Environment Switcher${NC}"
 echo "======================"
 echo ""
 echo "1) Local Development (IP: 192.168.1.66)"
-echo "2) Vercel Production (playing-xi.vercel.app)"
+echo "2) Railway Production (playing-production-7747.up.railway.app)"
+echo "3) Vercel Production (playing-xi.vercel.app) - No Socket.io"
 echo ""
-read -p "Select environment (1 or 2): " choice
+read -p "Select environment (1, 2, or 3): " choice
 
 case $choice in
   1)
@@ -32,6 +33,22 @@ EOF
     echo -e "${YELLOW}Redirect URI: http://192.168.1.66:3000/api/spotify/callback${NC}"
     ;;
   2)
+    echo -e "${BLUE}Switching to RAILWAY production...${NC}"
+    cat > .env.local << EOF
+# Spotify API Credentials
+NEXT_PUBLIC_SPOTIFY_CLIENT_ID=42dd5db55516412289ecf834c0a89fc9
+SPOTIFY_CLIENT_SECRET=64f497977a8c49249378acfc423bc4bd
+
+# For Railway production
+NEXT_PUBLIC_APP_URL=https://playing-production-7747.up.railway.app
+NEXT_PUBLIC_REDIRECT_URI=https://playing-production-7747.up.railway.app/api/spotify/callback
+NEXT_PUBLIC_SOCKET_URL=https://playing-production-7747.up.railway.app
+EOF
+    echo -e "${GREEN}✓ Switched to RAILWAY environment${NC}"
+    echo -e "${YELLOW}Redirect URI: https://playing-production-7747.up.railway.app/api/spotify/callback${NC}"
+    echo -e "${GREEN}✅ Socket.io will work on Railway!${NC}"
+    ;;
+  3)
     echo -e "${BLUE}Switching to VERCEL production...${NC}"
     cat > .env.local << EOF
 # Spotify API Credentials
@@ -45,6 +62,7 @@ NEXT_PUBLIC_SOCKET_URL=https://playing-xi.vercel.app
 EOF
     echo -e "${GREEN}✓ Switched to VERCEL environment${NC}"
     echo -e "${YELLOW}Redirect URI: https://playing-xi.vercel.app/api/spotify/callback${NC}"
+    echo -e "${RED}⚠️  Warning: Socket.io won't work on Vercel${NC}"
     ;;
   *)
     echo -e "${YELLOW}Invalid choice. No changes made.${NC}"
