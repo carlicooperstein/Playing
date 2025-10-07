@@ -39,10 +39,22 @@ app.prepare()
   const server = createServer((req, res) => {
     const parsedUrl = parse(req.url, true);
     
+    // Log incoming requests in production
+    if (!dev) {
+      console.log(`Request: ${req.method} ${parsedUrl.pathname}`);
+    }
+    
     // Add a simple health check endpoint
     if (parsedUrl.pathname === '/health') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ status: 'healthy', timestamp: new Date().toISOString() }));
+      return;
+    }
+    
+    // Add a root health check
+    if (parsedUrl.pathname === '/_health') {
+      res.writeHead(200, { 'Content-Type': 'text/plain' });
+      res.end('OK');
       return;
     }
     
@@ -308,9 +320,11 @@ app.prepare()
     });
   }, 30 * 60 * 1000);
 
-  server.listen(port, () => {
+  const host = '0.0.0.0';
+  server.listen(port, host, () => {
     console.log('=================================');
     console.log(`✅ Server is running!`);
+    console.log(`Host: ${host}`);
     console.log(`Port: ${port}`);
     console.log(`Environment: ${dev ? 'development' : 'production'}`);
     if (dev) {
@@ -332,6 +346,18 @@ app.prepare()
     }
     console.log('Socket.io: Enabled and ready');
     console.log('=================================');
+    
+    // Send a test request to health endpoint to verify it's working
+    if (!dev) {
+      setTimeout(() => {
+        const http = require('http');
+        http.get(`http://localhost:${port}/health`, (res) => {
+          console.log(`Health check status: ${res.statusCode}`);
+        }).on('error', (err) => {
+          console.error('Health check failed:', err);
+        });
+      }, 1000);
+    }
   });
 
   server.on('error', (err) => {
