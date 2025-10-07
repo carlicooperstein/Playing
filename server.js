@@ -10,8 +10,10 @@ console.log('=================================');
 console.log('Starting Silent Disco Server');
 console.log('=================================');
 console.log('Environment:', dev ? 'development' : 'production');
-console.log('Port:', port);
+console.log('PORT env variable:', process.env.PORT);
+console.log('Using port:', port);
 console.log('Node version:', process.version);
+console.log('Railway domain:', process.env.RAILWAY_PUBLIC_DOMAIN || 'not set');
 
 const app = next({ dev });
 const handle = app.getRequestHandler();
