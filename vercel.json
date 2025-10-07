@@ -1,7 +1,12 @@
 {
   "buildCommand": "next build",
   "outputDirectory": ".next",
-  "devCommand": "next dev",
+  "devCommand": "pnpm dev",
   "installCommand": "pnpm install",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "functions": {
+    "src/app/api/socket/route.ts": {
+      "maxDuration": 60
+    }
+  }
 }
