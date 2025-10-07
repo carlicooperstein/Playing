@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const CLIENT_ID = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID || '';
 const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET || '';
-const REDIRECT_URI = process.env.NEXT_PUBLIC_REDIRECT_URI || 'http://127.0.0.1:3000/api/spotify/callback';
+const REDIRECT_URI = process.env.NEXT_PUBLIC_REDIRECT_URI || 'http://192.168.1.66:3000/api/spotify/callback';
 
 export async function POST(request: NextRequest) {
   try {
-    const { code } = await request.json();
+    const { code, redirect_uri } = await request.json();
 
     if (!code) {
       return NextResponse.json(
@@ -15,11 +15,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Use the redirect_uri from the request, or fallback to env/default
+    const redirectUri = redirect_uri || REDIRECT_URI;
+    console.log('Token exchange using redirect_uri:', redirectUri);
+
     const tokenUrl = 'https://accounts.spotify.com/api/token';
     const params = new URLSearchParams({
       grant_type: 'authorization_code',
       code,
-      redirect_uri: REDIRECT_URI,
+      redirect_uri: redirectUri,
     });
 
     const response = await fetch(tokenUrl, {

@@ -1,5 +1,5 @@
 const CLIENT_ID = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID || '';
-const REDIRECT_URI = process.env.NEXT_PUBLIC_REDIRECT_URI || 'http://127.0.0.1:3000/api/spotify/callback';
+const REDIRECT_URI = process.env.NEXT_PUBLIC_REDIRECT_URI || 'http://192.168.1.66:3000/api/spotify/callback';
 const SCOPES = [
   'user-read-private',
   'user-read-email',
@@ -44,17 +44,21 @@ class SpotifyService {
   }
 
   private getAuthUrl(): string {
+    // Always use the environment variable or fallback to current IP
+    const redirectUri = process.env.NEXT_PUBLIC_REDIRECT_URI || 'http://192.168.1.66:3000/api/spotify/callback';
+    
     const params = new URLSearchParams({
       client_id: CLIENT_ID,
       response_type: 'code',
-      redirect_uri: REDIRECT_URI,
+      redirect_uri: redirectUri,
       scope: SCOPES.join(' '),
       show_dialog: 'true',
     });
 
     console.log('Auth params:', {
       client_id: CLIENT_ID,
-      redirect_uri: REDIRECT_URI,
+      redirect_uri: redirectUri,
+      env_redirect: process.env.NEXT_PUBLIC_REDIRECT_URI,
     });
 
     return `https://accounts.spotify.com/authorize?${params.toString()}`;
@@ -62,13 +66,15 @@ class SpotifyService {
 
   async handleCallback(code: string): Promise<string> {
     try {
-      console.log('Exchanging code for token...');
+      const redirectUri = process.env.NEXT_PUBLIC_REDIRECT_URI || 'http://192.168.1.66:3000/api/spotify/callback';
+      console.log('Exchanging code for token with redirect_uri:', redirectUri);
+      
       const response = await fetch('/api/spotify/token', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ code }),
+        body: JSON.stringify({ code, redirect_uri: redirectUri }),
       });
 
       const responseText = await response.text();

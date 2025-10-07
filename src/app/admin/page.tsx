@@ -146,8 +146,9 @@ export default function AdminDashboard() {
   const generateQRCode = async () => {
     if (!store.roomCode) return;
     
-    // Use the network IP for mobile access
-    const joinUrl = `http://192.168.1.66:3000/join?room=${store.roomCode}`;
+    // Use the socket URL from environment for mobile access
+    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://192.168.1.66:3000';
+    const joinUrl = `${socketUrl}/join?room=${store.roomCode}`;
     console.log('QR Code URL:', joinUrl);
     
     try {
@@ -540,7 +541,7 @@ export default function AdminDashboard() {
                   Share this code or QR for guests to join
                 </p>
                 <p className="text-center text-purple-300 text-xs mt-2">
-                  Mobile URL: http://192.168.1.66:3000/join
+                  Mobile URL: {process.env.NEXT_PUBLIC_SOCKET_URL || 'http://192.168.1.66:3000'}/join
                 </p>
               </CardContent>
             </Card>

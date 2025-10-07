@@ -4,9 +4,11 @@ const next = require('next');
 const { Server } = require('socket.io');
 
 const dev = process.env.NODE_ENV !== 'production';
-const app = next({ dev });
+const hostname = '0.0.0.0';
+const port = parseInt(process.env.PORT || '3000', 10);
+
+const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();
-const port = process.env.PORT || 3000;
 
 // Room management
 const rooms = new Map();
@@ -31,13 +33,20 @@ app.prepare().then(() => {
     handle(req, res, parsedUrl);
   });
 
+  // Configure CORS for production
+  const corsOrigin = process.env.NODE_ENV === 'production' 
+    ? process.env.NEXT_PUBLIC_SOCKET_URL || process.env.RAILWAY_STATIC_URL
+    : '*';
+
   const io = new Server(server, {
     cors: {
-      origin: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+      origin: corsOrigin,
       methods: ['GET', 'POST'],
+      credentials: true
     },
     pingTimeout: 60000,
     pingInterval: 25000,
+    transports: ['websocket', 'polling']
   });
 
   io.on('connection', (socket) => {
@@ -285,8 +294,25 @@ app.prepare().then(() => {
     });
   }, 30 * 60 * 1000);
 
-  server.listen(port, '0.0.0.0', () => {
-    console.log(`> Ready on http://localhost:${port} and http://192.168.1.66:${port}`);
+  server.listen(port, hostname, () => {
+    if (dev) {
+      const os = require('os');
+      const networkInterfaces = os.networkInterfaces();
+      let localIP = 'localhost';
+      
+      // Find the local IP address
+      Object.keys(networkInterfaces).forEach(interfaceName => {
+        networkInterfaces[interfaceName].forEach(interface => {
+          if (interface.family === 'IPv4' && !interface.internal && interface.address.startsWith('192.168')) {
+            localIP = interface.address;
+          }
+        });
+      });
+      
+      console.log(`> Ready on http://localhost:${port} and http://${localIP}:${port}`);
+    } else {
+      console.log(`> Server listening on port ${port}`);
+    }
   });
 });
 
