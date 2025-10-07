@@ -7,6 +7,12 @@ const dev = process.env.NODE_ENV !== 'production';
 const hostname = '0.0.0.0';
 const port = parseInt(process.env.PORT || '3000', 10);
 
+console.log('Starting server with configuration:');
+console.log('  NODE_ENV:', process.env.NODE_ENV);
+console.log('  PORT:', port);
+console.log('  Hostname:', hostname);
+console.log('  Dev mode:', dev);
+
 const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();
 
@@ -27,7 +33,9 @@ function generateGuestId() {
   return `guest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 }
 
-app.prepare().then(() => {
+app.prepare()
+  .then(() => {
+    console.log('Next.js app prepared successfully');
   const server = createServer((req, res) => {
     const parsedUrl = parse(req.url, true);
     handle(req, res, parsedUrl);
@@ -311,9 +319,19 @@ app.prepare().then(() => {
       
       console.log(`> Ready on http://localhost:${port} and http://${localIP}:${port}`);
     } else {
-      console.log(`> Server listening on port ${port}`);
+      console.log(`> Server listening on ${hostname}:${port}`);
+      console.log('> Production server started successfully');
     }
   });
+
+  server.on('error', (err) => {
+    console.error('Server error:', err);
+    process.exit(1);
+  });
+})
+.catch((err) => {
+  console.error('Failed to start server:', err);
+  process.exit(1);
 });
 
 
